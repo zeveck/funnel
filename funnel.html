@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marketing Funnel Visualization</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            padding: 10px;
+            overflow: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            height: calc(100vh - 20px);
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.8em;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 20px;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .input-group {
+            background: #f8f9fa;
+            padding: 10px 12px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .input-group label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+            font-size: 0.95em;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 8px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .canvas-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            min-height: 0;
+        }
+
+        canvas {
+            max-width: 100%;
+            max-height: 100%;
+            height: auto;
+            width: auto;
+        }
+
+        .button-container {
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .download-btn {
+            width: 250px;
+            padding: 10px 25px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .download-btn:active {
+            transform: translateY(0);
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Marketing Funnel Visualization</h1>
+
+        <div class="content">
+            <div class="inputs">
+                <div class="input-group">
+                    <label for="stage1">Awareness</label>
+                    <input type="number" id="stage1" value="10000" min="0">
+                </div>
+                <div class="input-group">
+                    <label for="stage2">Interest</label>
+                    <input type="number" id="stage2" value="5000" min="0">
+                </div>
+                <div class="input-group">
+                    <label for="stage3">Consideration</label>
+                    <input type="number" id="stage3" value="2000" min="0">
+                </div>
+                <div class="input-group">
+                    <label for="stage4">Intent</label>
+                    <input type="number" id="stage4" value="800" min="0">
+                </div>
+                <div class="input-group">
+                    <label for="stage5">Purchase</label>
+                    <input type="number" id="stage5" value="300" min="0">
+                </div>
+            </div>
+
+            <div class="canvas-container">
+                <canvas id="funnelCanvas" width="500" height="550"></canvas>
+            </div>
+        </div>
+
+        <div class="button-container">
+            <button class="download-btn" onclick="downloadFunnel()">Download as JPG</button>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('funnelCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const stages = [
+            { id: 'stage1', name: 'Awareness', color: '#667eea' },
+            { id: 'stage2', name: 'Interest', color: '#5a67d8' },
+            { id: 'stage3', name: 'Consideration', color: '#6b46c1' },
+            { id: 'stage4', name: 'Intent', color: '#7c3aed' },
+            { id: 'stage5', name: 'Purchase', color: '#805ad5' }
+        ];
+
+        function drawFunnel() {
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Fill white background for JPG export
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Get values
+            const values = stages.map(stage => {
+                const input = document.getElementById(stage.id);
+                return parseInt(input.value) || 0;
+            });
+
+            const maxValue = Math.max(...values);
+            const padding = 50;
+            const funnelHeight = canvas.height - padding * 2;
+            const stageHeight = funnelHeight / stages.length;
+            const maxWidth = canvas.width - padding * 2;
+
+            // Draw each stage
+            stages.forEach((stage, index) => {
+                const value = values[index];
+                const percentage = maxValue > 0 ? value / maxValue : 0;
+
+                // Calculate trapezoid dimensions
+                const y = padding + index * stageHeight;
+                const topWidth = maxWidth * (1 - (index / stages.length) * 0.7);
+                const bottomWidth = maxWidth * (1 - ((index + 1) / stages.length) * 0.7);
+
+                const topLeft = (canvas.width - topWidth) / 2;
+                const topRight = topLeft + topWidth;
+                const bottomLeft = (canvas.width - bottomWidth) / 2;
+                const bottomRight = bottomLeft + bottomWidth;
+
+                // Draw trapezoid
+                ctx.beginPath();
+                ctx.moveTo(topLeft, y);
+                ctx.lineTo(topRight, y);
+                ctx.lineTo(bottomRight, y + stageHeight);
+                ctx.lineTo(bottomLeft, y + stageHeight);
+                ctx.closePath();
+
+                // Fill with gradient
+                const gradient = ctx.createLinearGradient(0, y, 0, y + stageHeight);
+                gradient.addColorStop(0, stage.color);
+                gradient.addColorStop(1, stage.color + 'dd');
+                ctx.fillStyle = gradient;
+                ctx.fill();
+
+                // Add border
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+
+                // Add stage name
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 20px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(stage.name, canvas.width / 2, y + stageHeight / 2 - 10);
+
+                // Add value
+                ctx.font = 'bold 24px Arial';
+                const formattedValue = value.toLocaleString();
+                ctx.fillText(formattedValue, canvas.width / 2, y + stageHeight / 2 + 20);
+
+                // Add percentage (except for first stage)
+                if (index > 0 && values[index - 1] > 0) {
+                    const conversionRate = ((value / values[index - 1]) * 100).toFixed(1);
+                    ctx.font = '14px Arial';
+                    ctx.fillText(`${conversionRate}% conversion`, canvas.width / 2, y + stageHeight / 2 + 40);
+                }
+            });
+
+            // Add title
+            ctx.fillStyle = '#333333';
+            ctx.font = 'bold 24px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('Marketing Funnel', canvas.width / 2, 30);
+        }
+
+        function downloadFunnel() {
+            // Create a temporary canvas for JPG export
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = canvas.width;
+            tempCanvas.height = canvas.height;
+            const tempCtx = tempCanvas.getContext('2d');
+
+            // Draw white background
+            tempCtx.fillStyle = '#ffffff';
+            tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+
+            // Draw the funnel on temp canvas
+            tempCtx.drawImage(canvas, 0, 0);
+
+            // Convert to JPG and download
+            tempCanvas.toBlob(function(blob) {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'marketing-funnel.jpg';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }, 'image/jpeg', 0.95);
+        }
+
+        // Add event listeners to all inputs
+        stages.forEach(stage => {
+            document.getElementById(stage.id).addEventListener('input', drawFunnel);
+        });
+
+        // Initial draw
+        drawFunnel();
+    </script>
+</body>
+</html>
