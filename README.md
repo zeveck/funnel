@@ -16,9 +16,13 @@ A simple, interactive web-based tool for visualizing marketing funnels. Create p
 - **Export Functionality**: Download your funnel as a JPG image
 - **Responsive Layout**: Works on desktop and mobile devices
 
+## Live Demo
+
+Visit the live application at: [https://zeveck.github.io/funnel](https://zeveck.github.io/funnel)
+
 ## Usage
 
-1. Open `funnel.html` in any modern web browser
+1. Open `index.html` in any modern web browser
 2. Enter your values for each funnel stage using the input fields on the left
 3. The funnel visualization updates automatically as you type
 4. Click "Download as JPG" to save your funnel as an image file
