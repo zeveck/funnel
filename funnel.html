@@ -29,6 +29,7 @@
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             display: flex;
             flex-direction: column;
+            position: relative;
         }
 
         h1 {
@@ -126,6 +127,14 @@
             transform: translateY(0);
         }
 
+        .version {
+            position: absolute;
+            bottom: 10px;
+            right: 15px;
+            font-size: 0.75em;
+            color: #999;
+        }
+
         @media (max-width: 768px) {
             .content {
                 grid-template-columns: 1fr;
@@ -169,6 +178,8 @@
         <div class="button-container">
             <button class="download-btn" onclick="downloadFunnel()">Download as JPG</button>
         </div>
+
+        <div class="version">v0.1.0</div>
     </div>
 
     <script>
