@@ -47,7 +47,7 @@ Visit the live application at: [https://zeveck.github.io/funnel](https://zeveck.
 
 ## Version
 
-Current version: **v0.1.1**
+Current version: **v0.1.2**
 
 ## License
 
