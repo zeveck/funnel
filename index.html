@@ -25,7 +25,7 @@
             margin: 0 auto;
             background: white;
             border-radius: 15px;
-            padding: 20px;
+            padding: 12px 20px 15px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             display: flex;
             flex-direction: column;
@@ -34,7 +34,7 @@
         h1 {
             text-align: center;
             color: #333;
-            margin-bottom: 15px;
+            margin-bottom: 6px;
             font-size: 1.8em;
         }
 
@@ -46,15 +46,23 @@
             min-height: 0;
         }
 
-        .inputs {
+        .sidebar {
             display: flex;
             flex-direction: column;
             gap: 6px;
+            min-height: 0;
+        }
+
+        .stages-scroll {
+            flex: 1;
             overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-height: 0;
         }
 
         .controls-section {
-            margin-bottom: 8px;
             padding: 10px;
             background: #f8f9fa;
             border-radius: 8px;
@@ -225,6 +233,13 @@
             border-color: #667eea;
         }
 
+        .right-column {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            min-height: 0;
+        }
+
         .canvas-container {
             display: flex;
             justify-content: center;
@@ -234,6 +249,7 @@
             padding: 15px;
             min-height: 0;
             overflow-y: auto;
+            flex: 1;
         }
 
         canvas {
@@ -243,7 +259,6 @@
         }
 
         .button-container {
-            margin-top: 10px;
             text-align: center;
         }
 
@@ -278,6 +293,78 @@
             color: #999;
         }
 
+        .funnel-name-section {
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .funnel-name-controls {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .funnel-name-input {
+            flex: 1;
+            padding: 6px 8px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 0.9em;
+            font-weight: 600;
+            transition: border-color 0.3s;
+        }
+
+        .funnel-name-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .funnel-title-color-picker {
+            width: 32px;
+            height: 32px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        .funnel-title-color-picker:hover {
+            border-color: #667eea;
+        }
+
+        .save-load-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .save-load-btn {
+            padding: 10px 25px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .save-load-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .save-load-btn:active {
+            transform: translateY(0);
+        }
+
+        #fileInput {
+            display: none;
+        }
+
         @media (max-width: 768px) {
             .content {
                 grid-template-columns: 1fr;
@@ -290,7 +377,7 @@
         <h1>Marketing Funnel Visualization</h1>
 
         <div class="content">
-            <div class="inputs">
+            <div class="sidebar">
                 <div class="controls-section">
                     <h3>Funnel Size</h3>
                     <div class="slider-container">
@@ -298,21 +385,35 @@
                         <span class="slider-value"><span id="sizeValue">100</span>%</span>
                     </div>
                 </div>
+                <div class="funnel-name-section">
+                    <div class="funnel-name-controls">
+                        <input type="text" id="funnelNameInput" class="funnel-name-input" value="Marketing Funnel" oninput="updateFunnelName(this.value)">
+                        <input type="color" id="funnelTitleColor" class="funnel-title-color-picker" value="#333333" onchange="updateFunnelTitleColor(this.value)" title="Title color">
+                    </div>
+                </div>
                 <button class="add-stage-btn" onclick="addStage()">+ Add Stage</button>
-                <div id="stagesContainer"></div>
+                <div class="stages-scroll">
+                    <div id="stagesContainer"></div>
+                </div>
+                <div class="save-load-section">
+                    <button class="save-load-btn" onclick="saveState()">💾 Save</button>
+                    <button class="save-load-btn" onclick="document.getElementById('fileInput').click()">📂 Load</button>
+                </div>
+                <input type="file" id="fileInput" accept=".json" onchange="loadState(event)">
             </div>
 
-            <div class="canvas-container">
-                <canvas id="funnelCanvas" width="550" height="600"></canvas>
+            <div class="right-column">
+                <div class="canvas-container">
+                    <canvas id="funnelCanvas" width="550" height="600"></canvas>
+                </div>
+                <div class="button-container">
+                    <button class="download-btn" onclick="downloadFunnel()">Download as JPG</button>
+                </div>
             </div>
-        </div>
-
-        <div class="button-container">
-            <button class="download-btn" onclick="downloadFunnel()">Download as JPG</button>
         </div>
     </div>
 
-    <div class="version">v0.1.4</div>
+    <div class="version">v0.2.0</div>
 
     <script>
         const canvas = document.getElementById('funnelCanvas');
@@ -328,9 +429,21 @@
         ];
 
         let funnelScale = 1.0;
+        let funnelName = 'Marketing Funnel';
+        let funnelTitleColor = '#333333';
 
         function generateId() {
             return 'stage_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        }
+
+        function updateFunnelName(name) {
+            funnelName = name;
+            drawFunnel();
+        }
+
+        function updateFunnelTitleColor(color) {
+            funnelTitleColor = color;
+            drawFunnel();
         }
 
         function generateColor(index, total) {
@@ -810,11 +923,11 @@
             });
 
             // Add title at the top
-            ctx.fillStyle = '#333333';
+            ctx.fillStyle = funnelTitleColor;
             ctx.font = 'bold 26px Arial';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'top';
-            ctx.fillText('Marketing Funnel', canvas.width / 2, padding - 10);
+            ctx.fillText(funnelName, canvas.width / 2, padding - 10);
         }
 
         function downloadFunnel() {
@@ -837,6 +950,83 @@
                 document.body.removeChild(a);
                 URL.revokeObjectURL(url);
             }, 'image/jpeg', 0.95);
+        }
+
+        function saveState() {
+            const state = {
+                version: '0.2.0',
+                funnelName: funnelName,
+                funnelTitleColor: funnelTitleColor,
+                stages: stages,
+                funnelScale: funnelScale
+            };
+
+            const dataStr = JSON.stringify(state, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+
+            // Create filename from funnel name
+            const safeFilename = funnelName.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '.json';
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = safeFilename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function loadState(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const state = JSON.parse(e.target.result);
+
+                    // Validate state structure
+                    if (!state.stages || !Array.isArray(state.stages)) {
+                        alert('Invalid funnel state file');
+                        return;
+                    }
+
+                    // Load funnel name and color if present
+                    if (state.funnelName) {
+                        funnelName = state.funnelName;
+                        document.getElementById('funnelNameInput').value = funnelName;
+                    }
+                    if (state.funnelTitleColor) {
+                        funnelTitleColor = state.funnelTitleColor;
+                        document.getElementById('funnelTitleColor').value = funnelTitleColor;
+                    }
+
+                    // Load stages
+                    stages = state.stages;
+
+                    // Load funnel scale if present
+                    if (state.funnelScale) {
+                        funnelScale = state.funnelScale;
+                        const sliderValue = Math.round(funnelScale * 100);
+                        document.getElementById('sizeSlider').value = sliderValue;
+                        document.getElementById('sizeValue').textContent = sliderValue;
+                        canvas.width = 550 * funnelScale;
+                        canvas.height = 600 * funnelScale;
+                    }
+
+                    // Re-render
+                    renderStages();
+                    drawFunnel();
+
+                    // Clear file input for next load
+                    event.target.value = '';
+                } catch (error) {
+                    alert('Error loading funnel state: ' + error.message);
+                }
+            };
+
+            reader.readAsText(file);
         }
 
         // Initial render

@@ -13,7 +13,8 @@ A simple, interactive web-based tool for visualizing marketing funnels. Create p
   - Intent
   - Purchase
 - **Color Customization**: Use color pickers to customize each stage's background color and text color
-- **Drag-and-Drop Reordering**: Drag stages to reorder them in the funnel
+- **Drag-and-Drop Reordering**: Drag stages to reorder them in the funnel with position preview
+- **Save/Load State**: Export your funnel configuration as JSON and reload it later
 - **Size Control**: Scale funnel from 50% to 200% using the size slider
 - **Automatic Conversion Rates**: Calculates and displays conversion percentages between stages
 - **Smooth Rounded Corners**: Vector-based rendering ensures perfect corners in all configurations
@@ -30,12 +31,15 @@ Visit the live application at: [https://zeveck.github.io/funnel](https://zeveck.
 1. Open `index.html` in any modern web browser
 2. Enter your values for each funnel stage using the input fields on the left
 3. Customize stage names by clicking on them
-4. Click the color picker next to each stage to change its color
-5. Use the size slider to adjust the funnel size
-6. Add new stages with the "+ Add Stage" button
-7. Remove stages using the × button (requires at least 1 stage)
-8. The funnel visualization updates automatically as you make changes
-9. Click "Download as JPG" to save your funnel as an image file
+4. Click the color pickers next to each stage to change background and text colors
+5. Drag stages to reorder them (blue border shows where stage will be inserted)
+6. Use the size slider to adjust the funnel size
+7. Add new stages with the "+ Add Stage" button
+8. Remove stages using the × button (requires at least 1 stage)
+9. Save your funnel configuration with the "💾 Save" button (exports as JSON)
+10. Load a previously saved configuration with the "📂 Load" button
+11. The funnel visualization updates automatically as you make changes
+12. Click "Download as JPG" to save your funnel as an image file
 
 ## Technical Details
 
@@ -48,7 +52,7 @@ Visit the live application at: [https://zeveck.github.io/funnel](https://zeveck.
 
 ## Version
 
-Current version: **v0.1.4**
+Current version: **v0.2.0**
 
 ## License
 
