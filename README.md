@@ -12,7 +12,8 @@ A simple, interactive web-based tool for visualizing marketing funnels. Create p
   - Consideration
   - Intent
   - Purchase
-- **Color Customization**: Use color pickers to customize each stage's color
+- **Color Customization**: Use color pickers to customize each stage's background color and text color
+- **Drag-and-Drop Reordering**: Drag stages to reorder them in the funnel
 - **Size Control**: Scale funnel from 50% to 200% using the size slider
 - **Automatic Conversion Rates**: Calculates and displays conversion percentages between stages
 - **Smooth Rounded Corners**: Vector-based rendering ensures perfect corners in all configurations
@@ -47,7 +48,7 @@ Visit the live application at: [https://zeveck.github.io/funnel](https://zeveck.
 
 ## Version
 
-Current version: **v0.1.3**
+Current version: **v0.1.4**
 
 ## License
 
